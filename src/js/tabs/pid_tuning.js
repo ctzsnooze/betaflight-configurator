@@ -716,9 +716,9 @@ TABS.pid_tuning.initialize = function (callback) {
             self.updateFilterWarning();
         });
 
-        $('.pid_filter input[name="gyroLowpassDynMinFrequency"]').on('change', () => $('input[id="gyroLowpassDynEnabled"]').prop('checked', false).trigger('change'));
-        $('.pid_filter input[name="gyroLowpassDynMaxFrequency"]').on('change', () => $('input[id="gyroLowpassDynEnabled"]').prop('checked', false).trigger('change'));
-        $('.pid_filter input[name="gyroLowpass2Frequency"]').on('change', () => $('input[id="gyroLowpass2Enabled"]').prop('checked', false).trigger('change'));
+        $('.pid_filter input[name="gyroLowpassDynMinFrequency"]').on('input', () => $('input[id="gyroLowpassDynEnabled"]').prop('checked', false).trigger('change'));
+        $('.pid_filter input[name="gyroLowpassDynMaxFrequency"]').on('input', () => $('input[id="gyroLowpassDynEnabled"]').prop('checked', false).trigger('change'));
+        $('.pid_filter input[name="gyroLowpass2Frequency"]').on('input', () => $('input[id="gyroLowpass2Enabled"]').prop('checked', false).trigger('change'));
 
         $('input[id="gyroLowpassDynEnabled"]').change(function() {
             const checked = $(this).is(':checked');
@@ -745,8 +745,17 @@ TABS.pid_tuning.initialize = function (callback) {
             const checked = $(this).is(':checked');
             const cutoff = FC.FILTER_CONFIG.gyro_lowpass2_hz > 0 ? FC.FILTER_CONFIG.gyro_lowpass2_hz : FILTER_DEFAULT.gyro_lowpass2_hz;
             const type = FC.FILTER_CONFIG.gyro_lowpass2_hz > 0 ? FC.FILTER_CONFIG.gyro_lowpass2_type : FILTER_DEFAULT.gyro_lowpass2_type;
+            const gyroLowpass2Frequency = $('.pid_filter input[name="gyroLowpass2Frequency"]');
 
-            $('.pid_filter input[name="gyroLowpass2Frequency"]').val(checked ? cutoff : 0).attr('disabled', !checked);
+            gyroLowpass2Frequency.attr('disabled', !checked);
+
+            // conditional ternary operator does somehow not work when setting val here so we have to write it like this to set value to 0 instead of 1
+            if (checked) {
+                gyroLowpass2Frequency.val(cutoff);
+            } else {
+                gyroLowpass2Frequency.val(0);
+            }
+
             $('.pid_filter select[name="gyroLowpass2Type"]').val(type).attr('disabled', !checked);
         });
 
