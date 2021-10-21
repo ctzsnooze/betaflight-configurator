@@ -434,15 +434,19 @@ TuningSliders.updateFilterSlidersDisplay = function() {
     if (semver.gte(FC.CONFIG.apiVersion, API_VERSION_1_44)) {
         this.GyroSliderUnavailable = !FC.TUNING_SLIDERS.slider_gyro_filter;
         this.DTermSliderUnavailable = !FC.TUNING_SLIDERS.slider_dterm_filter;
+        const lp1Changed = parseInt($('.pid_filter input[name="gyroLowpassDynMinFrequency"]').val()) !== Math.floor(this.FILTER_DEFAULT.gyro_lowpass_dyn_min_hz * this.sliderGyroFilterMultiplier);
+        const lp2Changed = parseInt($('.pid_filter input[name="gyroLowpass2Frequency"]').val()) !== Math.floor(this.FILTER_DEFAULT.gyro_lowpass2_hz * this.sliderGyroFilterMultiplier);
+        const lp1Enabled = parseInt($('.pid_filter input[name="gyroLowpassDynMinFrequency"]').val()) > 1;
+        const lp2Enabled = parseInt($('.pid_filter input[name="gyroLowpass2Frequency"]').val()) > 1;
+        const lpxChanged = lp1Changed && lp2Changed;
+        const lpxDisabled = !(lp1Enabled || lp2Enabled);
+        const lpxOffAndChanged = lpxChanged && lpxDisabled;
 
-        if (parseInt($('.pid_filter input[name="gyroLowpassDynMinFrequency"]').val()) !==
-                Math.floor(this.FILTER_DEFAULT.gyro_lowpass_dyn_min_hz * this.sliderGyroFilterMultiplier) ||
-            parseInt($('.pid_filter input[name="gyroLowpassDynMaxFrequency"]').val()) !==
-                Math.floor(this.FILTER_DEFAULT.gyro_lowpass_dyn_max_hz * this.sliderGyroFilterMultiplier) ||
-            parseInt($('.pid_filter select[name="gyroLowpassDynType"]').val()) !== this.FILTER_DEFAULT.gyro_lowpass_type ||
-            parseInt($('.pid_filter input[name="gyroLowpass2Frequency"]').val()) !==
-                Math.floor(this.FILTER_DEFAULT.gyro_lowpass2_hz * this.sliderGyroFilterMultiplier) ||
-            parseInt($('.pid_filter select[name="gyroLowpass2Type"]').val()) !== this.FILTER_DEFAULT.gyro_lowpass2_type) {
+        const lpDynMaxChanged = parseInt($('.pid_filter input[name="gyroLowpassDynMaxFrequency"]').val()) !== Math.floor(this.FILTER_DEFAULT.gyro_lowpass_dyn_max_hz * this.sliderGyroFilterMultiplier);
+        const lpfDynTypeChanged = parseInt($('.pid_filter select[name="gyroLowpassDynType"]').val()) !== this.FILTER_DEFAULT.gyro_lowpass_type;
+        const lpf2TypeChanged = parseInt($('.pid_filter select[name="gyroLowpass2Type"]').val()) !== this.FILTER_DEFAULT.gyro_lowpass2_type;
+
+        if ((lp1Changed || lpDynMaxChanged || lpfDynTypeChanged || lp2Changed || lpf2TypeChanged) && lpxOffAndChanged) {
             this.GyroSliderUnavailable = true;
             this.sliderGyroFilter = 0;
         } else {
@@ -479,8 +483,13 @@ TuningSliders.updateFilterSlidersDisplay = function() {
         $('.tuningFilterSliders .sliderLabels tr:last-child').show();
     }
 
-    $('.tuningFilterSliders').toggle(!(this.GyroSliderUnavailable && this.DTermSliderUnavailable));
-    $('.subtab-filter .slidersDisabled').toggle(this.GyroSliderUnavailable || this.DTermSliderUnavailable);
+    if (semver.gte(FC.CONFIG.apiVersion, API_VERSION_1_44)) {
+        $('.subtab-filter .slidersDisabled').hide();
+        $('.subtab-filter .sliderGyroDisabled').toggle(this.GyroSliderUnavailable);
+        $('.subtab-filter .sliderDTermDisabled').toggle(this.DTermSliderUnavailable);
+    } else {
+        $('.tuningFilterSliders').toggle(!(this.GyroSliderUnavailable && this.DTermSliderUnavailable));
+    }
     $('.subtab-filter .nonExpertModeSlidersNote').toggle((!this.GyroSliderUnavailable || !this.DTermSliderUnavailable) && !this.expertMode);
     this.updateFilterSlidersWarning(this.GyroSliderUnavailable, this.DTermSliderUnavailable);
 };

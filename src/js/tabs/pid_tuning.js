@@ -716,6 +716,10 @@ TABS.pid_tuning.initialize = function (callback) {
             self.updateFilterWarning();
         });
 
+        $('.pid_filter input[name="gyroLowpassDynMinFrequency"]').on('change', () => $('input[id="gyroLowpassDynEnabled"]').prop('checked', false).trigger('change'));
+        $('.pid_filter input[name="gyroLowpassDynMaxFrequency"]').on('change', () => $('input[id="gyroLowpassDynEnabled"]').prop('checked', false).trigger('change'));
+        $('.pid_filter input[name="gyroLowpass2Frequency"]').on('change', () => $('input[id="gyroLowpass2Enabled"]').prop('checked', false).trigger('change'));
+
         $('input[id="gyroLowpassDynEnabled"]').change(function() {
             const checked = $(this).is(':checked');
             let cutoff_min = FILTER_DEFAULT.gyro_lowpass_dyn_min_hz;
@@ -2178,6 +2182,38 @@ TABS.pid_tuning.initialize = function (callback) {
                     TuningSliders.resetGyroFilterSlider();
                     self.analyticsChanges['GyroFilterTuningSlider'] = "On";
                 }
+                if (TuningSliders.DTermSliderUnavailable) {
+                    //set Slider mode to ON when re-enabling Sliders
+                    if (semver.gte(FC.CONFIG.apiVersion, API_VERSION_1_44)) {
+                        FC.TUNING_SLIDERS.slider_dterm_filter = 1;
+                    }
+                    // update switchery dynamically based on defaults
+                    $('input[id="dtermLowpassDynEnabled"]').prop('checked', false).click();
+                    $('input[id="dtermLowpassEnabled"]').prop('checked', true).click();
+                    $('input[id="dtermLowpass2Enabled"]').prop('checked', false).click();
+                    TuningSliders.resetDTermFilterSlider();
+                    self.analyticsChanges['DTermFilterTuningSlider'] = "On";
+                }
+            });
+
+            // enable Gyro Filter sliders button
+            $('a.buttonFilterGyroTuningSlider').click(function() {
+                if (TuningSliders.GyroSliderUnavailable) {
+                    //set Slider mode to ON when re-enabling Sliders
+                    if (semver.gte(FC.CONFIG.apiVersion, API_VERSION_1_44)) {
+                        FC.TUNING_SLIDERS.slider_gyro_filter = 1;
+                    }
+                    // update switchery dynamically based on defaults
+                    $('input[id="gyroLowpassDynEnabled"]').prop('checked', false).click();
+                    $('input[id="gyroLowpassEnabled"]').prop('checked', true).click();
+                    $('input[id="gyroLowpass2Enabled"]').prop('checked', false).click();
+                    TuningSliders.resetGyroFilterSlider();
+                    self.analyticsChanges['GyroFilterTuningSlider'] = "On";
+                }
+            });
+
+            // enable DTerm Filter sliders button
+            $('a.buttonFilterDTermTuningSlider').click(function() {
                 if (TuningSliders.DTermSliderUnavailable) {
                     //set Slider mode to ON when re-enabling Sliders
                     if (semver.gte(FC.CONFIG.apiVersion, API_VERSION_1_44)) {

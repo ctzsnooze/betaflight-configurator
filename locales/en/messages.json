@@ -3634,6 +3634,14 @@
         "message": "<strong>Note:</strong> Sliders are disabled because values were changed manually. Clicking the '$t(pidTuningSliderEnableButton.message)' button will activate them again. This will reset the values and any unsaved changes will be lost.",
         "description": "Tuning sliders disabled note when manual changes are detected"
     },
+    "pidTuningGyroSliderDisabled": {
+        "message": "<strong>Note:</strong> Gyro Slider is disabled because values were changed manually. Clicking the '$t(pidTuningGyroSliderEnableButton.message)' button will activate them again. This will reset the values and any unsaved changes will be lost.",
+        "description": "Gyro Tuning sliders disabled note when manual changes are detected"
+    },
+    "pidTuningDTermSliderDisabled": {
+        "message": "<strong>Note:</strong> DTerm Slider is disabled because values were changed manually. Clicking the '$t(pidTuningDTermSliderEnableButton.message)' button will activate them again. This will reset the values and any unsaved changes will be lost.",
+        "description": "DTerm Tuning sliders disabled note when manual changes are detected"
+    },
     "pidTuningPidSlidersDisabled": {
         "message": "<strong>Note:</strong> Sliders are disabled. Clicking the '$t(pidTuningSliderEnableButton.message)' button will change the PID values to match your previously saved slider position.",
         "description": "Tuning sliders disabled note"
@@ -3641,6 +3649,14 @@
     "pidTuningSliderEnableButton": {
         "message": "Enable Sliders",
         "description": "Button label for enabling sliders"
+    },
+    "pidTuningGyroSliderEnableButton": {
+        "message": "Enable Gyro Slider",
+        "description": "Button label for enabling Gyro filter sliders"
+    },
+    "pidTuningDTermSliderEnableButton": {
+        "message": "Enable Dterm Slider",
+        "description": "Button label for enabling DTerm filter sliders"
     },
     "pidTuningSlidersNonExpertMode": {
         "message": "<strong>Note:</strong> Sliders range is restricted because you are not in expert mode. This range should be suitable for most builds and beginners.",
