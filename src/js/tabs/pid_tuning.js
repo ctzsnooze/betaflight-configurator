@@ -902,7 +902,6 @@ TABS.pid_tuning.initialize = function (callback) {
                         gyroLowpassFilterMode.val(FC.FILTER_CONFIG.gyro_lowpass_dyn_min_hz > 0 ? 1 : 0).change();
                     } else {
                         // the user is disabling Lowpass 1 so set everything to zero
-                        gyroLowpassFilterMode.val(1).change();
                         gyroLowpassDynMinFrequency.val(0);
                         gyroLowpassDynMaxFrequency.val(0);
                         gyroLowpassFrequency.val(0);
@@ -928,13 +927,19 @@ TABS.pid_tuning.initialize = function (callback) {
                 const cutoffMin = FC.FILTER_CONFIG.gyro_lowpass_dyn_min_hz > 0 ? FC.FILTER_CONFIG.gyro_lowpass_dyn_min_hz : FILTER_DEFAULT.gyro_lowpass_dyn_min_hz;
                 const cutoffMax = FC.FILTER_CONFIG.gyro_lowpass_dyn_max_hz > 0 ? FC.FILTER_CONFIG.gyro_lowpass_dyn_max_hz : FILTER_DEFAULT.gyro_lowpass_dyn_max_hz;
 
+                GUI.log("gyroLowpassFilterMode.change - cutoff: " + cutoff + " min: " + cutoffMin + " dynMode: " + dynMode);
+
                 gyroLowpassFrequency.val(dynMode ? 0 : cutoff);
                 gyroLowpassDynMinFrequency.val(dynMode ? cutoffMin : 0);
                 gyroLowpassDynMaxFrequency.val(dynMode ? cutoffMax : 0);
 
+                GUI.log("after dynMode check - cutoff: " + cutoff + " min: " + cutoffMin + " dynMode: " + dynMode);
+
                 if (TuningSliders.sliderGyroFilter) {
                     self.calculateNewGyroFilters();
                 }
+
+                GUI.log("after calculateNewDTermFilters - cutoff: " + cutoff + " min: " + cutoffMin + " dynMode: " + dynMode);
 
                 gyroLowpassOptionStatic.toggle(!dynMode);
                 gyroLowpassOptionDynamic.toggle(!!dynMode);
@@ -978,8 +983,10 @@ TABS.pid_tuning.initialize = function (callback) {
                 }
 
                 dtermLowpassOption.toggle(checked);
-                dtermLowpassOptionStatic.toggle(checked && FC.FILTER_CONFIG.dterm_lowpass_dyn_min_hz === 0);
-                dtermLowpassOptionDynamic.toggle(checked && FC.FILTER_CONFIG.dterm_lowpass_dyn_min_hz !== 0);
+                dtermLowpassOptionStatic.toggle(checked && parseInt(dtermLowpassDynMinFrequency.val()) === 0);
+                dtermLowpassOptionDynamic.toggle(checked && parseInt(dtermLowpassDynMinFrequency.val()) !== 0);
+                // dtermLowpassOptionStatic.toggle(checked && FC.FILTER_CONFIG.dterm_lowpass_dyn_min_hz === 0);
+                // dtermLowpassOptionDynamic.toggle(checked && FC.FILTER_CONFIG.dterm_lowpass_dyn_min_hz !== 0);
             });
 
             dtermLowpassFilterMode.change(function() {
@@ -989,13 +996,20 @@ TABS.pid_tuning.initialize = function (callback) {
                 const cutoffMin = FC.FILTER_CONFIG.dterm_lowpass_dyn_min_hz > 0 ? FC.FILTER_CONFIG.dterm_lowpass_dyn_min_hz : FILTER_DEFAULT.dterm_lowpass_dyn_min_hz;
                 const cutoffMax = FC.FILTER_CONFIG.dterm_lowpass_dyn_max_hz > 0 ? FC.FILTER_CONFIG.dterm_lowpass_dyn_max_hz : FILTER_DEFAULT.dterm_lowpass_dyn_max_hz;
 
+                GUI.log("dtermLowpassFilterMode.change - cutoff: " + cutoff + " min: " + cutoffMin + " dynMode: " + dynMode);
+
+
                 dtermLowpassFrequency.val(dynMode ? 0 : cutoff);
                 dtermLowpassDynMinFrequency.val(dynMode ? cutoffMin : 0);
                 dtermLowpassDynMaxFrequency.val(dynMode ? cutoffMax : 0);
 
-                if (TuningSliders.sliderDtermFilter) {
+                GUI.log("after dynMode check - cutoff: " + cutoff + " min: " + cutoffMin + " dynMode: " + dynMode);
+
+                if (TuningSliders.sliderDTermFilter) {
                     self.calculateNewDTermFilters();
                 }
+
+                GUI.log("after calculateNewDTermFilters - cutoff: " + cutoff + " min: " + cutoffMin + " dynMode: " + dynMode);
 
                 dtermLowpassOptionStatic.toggle(!dynMode);
                 dtermLowpassOptionDynamic.toggle(!!dynMode);
